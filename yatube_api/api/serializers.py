@@ -6,7 +6,7 @@ from posts.models import Comment, Post
 
 
 class PostSerializer(serializers.ModelSerializer):
-    author = SlugRelatedField(slug_field='username', read_only=True)
+    author = SlugRelatedField(slug_field='username', read_only=True)  # type: ignore[var-annotated]  # noqa: E501
 
     class Meta:
         fields = '__all__'
@@ -14,7 +14,7 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    author = serializers.SlugRelatedField(
+    author = serializers.SlugRelatedField(  # type: ignore[var-annotated]
         read_only=True, slug_field='username'
     )
 
