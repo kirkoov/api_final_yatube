@@ -1,0 +1,56 @@
+[tool.poetry]
+name = "api-final-yatube"
+version = "0.1.0"
+description = "Api_yatube getting final."
+authors = ["Кирилл Кувшинов <k.koovshinov@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9.10"
+django = "3.2.16"
+pytest = "6.2.4"
+pytest-pythonpath = "0.7.3"
+pytest-django = "4.4.0"
+djangorestframework = "3.12.4"
+djangorestframework-simplejwt = "4.7.2"
+pillow = "9.3.0"
+pyjwt = "2.1.0"
+requests = "2.26.0"
+
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.6.1"
+flake8 = "^6.1.0"
+ruff = "^0.1.0"
+djangorestframework-stubs = "^3.14.3"
+django-stubs = "^4.2.4"
+
+[tool.mypy]
+plugins = ["mypy_django_plugin.main"]
+
+[tool.django-stubs]
+django_settings_module = "yatube_api.settings"
+
+[tool.ruff]
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".git",
+    ".git-rewrite",
+    ".mypy_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "migrations"
+]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
