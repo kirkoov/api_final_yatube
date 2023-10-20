@@ -2,7 +2,7 @@ from rest_framework.routers import DefaultRouter
 
 from django.urls import include, path
 
-from .views import CommentViewSet, PostViewSet
+from .views import CommentViewSet, GroupViewSet, PostViewSet
 
 
 app_name = 'api'
@@ -14,6 +14,7 @@ v1_router.register(
     r'v1/posts/(?P<post_id>\d+)/comments',
     CommentViewSet,
     basename='comment-noquery-viewset')
+v1_router.register('v1/groups', GroupViewSet)
 
 
 urlpatterns = [

@@ -3,13 +3,13 @@ from rest_framework import viewsets
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 
-from posts.models import Post
-from .serializers import CommentSerializer, PostSerializer
+from posts.models import Post, Group
+from .serializers import CommentSerializer, GroupSerializer, PostSerializer
 
 
-# class GroupViewSet(viewsets.ReadOnlyModelViewSet):
-#     queryset = Group.objects.all()
-#     serializer_class = GroupSerializer
+class GroupViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
 
 
 class PostViewSet(viewsets.ModelViewSet):
