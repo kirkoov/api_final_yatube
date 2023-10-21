@@ -1,23 +1,24 @@
-from rest_framework import mixins, permissions, viewsets
+from rest_framework import permissions, viewsets
 from rest_framework.pagination import LimitOffsetPagination
 
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_list_or_404, get_object_or_404
 
-from posts.models import Post, Group
-from .serializers import CommentSerializer, GroupSerializer, PostSerializer
+from posts.models import Post, Follow, Group
+from .serializers import (
+    CommentSerializer, FollowSerializer, GroupSerializer, PostSerializer)
 
 
 class AuthorOrReadOnlyMixin:
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
-class GroupViewSet(AuthorOrReadOnlyMixin, viewsets.ReadOnlyModelViewSet):
+class GroupViewSet(AuthorOrReadOnlyMixin, viewsets.ReadOnlyModelViewSet):  # type: ignore[misc]  # noqa: E501
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
 
 
-class PostViewSet(AuthorOrReadOnlyMixin, viewsets.ModelViewSet):
+class PostViewSet(AuthorOrReadOnlyMixin, viewsets.ModelViewSet):  # type: ignore[misc]  # noqa: E501
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     pagination_class = LimitOffsetPagination
@@ -36,7 +37,7 @@ class PostViewSet(AuthorOrReadOnlyMixin, viewsets.ModelViewSet):
         super(PostViewSet, self).perform_destroy(instance)
 
 
-class CommentViewSet(AuthorOrReadOnlyMixin, viewsets.ModelViewSet):
+class CommentViewSet(AuthorOrReadOnlyMixin, viewsets.ModelViewSet):  # type: ignore[misc]  # noqa: E501
     serializer_class = CommentSerializer
 
     def get_post_by_id(self):
@@ -62,10 +63,11 @@ class CommentViewSet(AuthorOrReadOnlyMixin, viewsets.ModelViewSet):
         super(CommentViewSet, self).perform_destroy(instance)
 
 
-class FollowViewSet(
-    mixins.CreateModelMixin,
-    mixins.ListModelMixin,
-    mixins.DestroyModelMixin,
-    viewsets.GenericViewSet
-):
-    ...
+class FollowViewSet(viewsets.ModelViewSet):
+    serializer_class = FollowSerializer
+
+    def get_queryset(self):
+        return get_list_or_404(Follow, user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
