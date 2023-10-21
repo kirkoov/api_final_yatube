@@ -1,4 +1,4 @@
-from rest_framework import permissions, viewsets
+from rest_framework import mixins, permissions, viewsets
 from rest_framework.pagination import LimitOffsetPagination
 
 from django.core.exceptions import PermissionDenied
@@ -8,16 +8,18 @@ from posts.models import Post, Group
 from .serializers import CommentSerializer, GroupSerializer, PostSerializer
 
 
-class GroupViewSet(viewsets.ReadOnlyModelViewSet):
+class AuthorOrReadOnlyMixin:
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+
+class GroupViewSet(AuthorOrReadOnlyMixin, viewsets.ReadOnlyModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
-class PostViewSet(viewsets.ModelViewSet):
+class PostViewSet(AuthorOrReadOnlyMixin, viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     pagination_class = LimitOffsetPagination
 
     def perform_create(self, serializer):
@@ -34,15 +36,14 @@ class PostViewSet(viewsets.ModelViewSet):
         super(PostViewSet, self).perform_destroy(instance)
 
 
-class CommentViewSet(viewsets.ModelViewSet):
+class CommentViewSet(AuthorOrReadOnlyMixin, viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get_post_by_id(self):
-        return get_object_or_404(Post, pk=self.kwargs.get("post_id"))
+        return get_object_or_404(Post, pk=self.kwargs.get('post_id'))
 
     def get_queryset(self):
-        return CommentViewSet.get_post_by_id(self).comments
+        return CommentViewSet.get_post_by_id(self).comments.all()
 
     def perform_create(self, serializer):
         serializer.save(
@@ -59,3 +60,12 @@ class CommentViewSet(viewsets.ModelViewSet):
         if instance.author != self.request.user:
             raise PermissionDenied()
         super(CommentViewSet, self).perform_destroy(instance)
+
+
+class FollowViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet
+):
+    ...
