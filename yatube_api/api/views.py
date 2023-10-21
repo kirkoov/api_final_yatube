@@ -13,12 +13,12 @@ class AuthorOrReadOnlyMixin:
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
-class GroupViewSet(AuthorOrReadOnlyMixin, viewsets.ReadOnlyModelViewSet):  # type: ignore[misc]  # noqa: E501
+class GroupViewSet(AuthorOrReadOnlyMixin, viewsets.ReadOnlyModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
 
 
-class PostViewSet(AuthorOrReadOnlyMixin, viewsets.ModelViewSet):  # type: ignore[misc]  # noqa: E501
+class PostViewSet(AuthorOrReadOnlyMixin, viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     pagination_class = LimitOffsetPagination
@@ -37,7 +37,7 @@ class PostViewSet(AuthorOrReadOnlyMixin, viewsets.ModelViewSet):  # type: ignore
         super(PostViewSet, self).perform_destroy(instance)
 
 
-class CommentViewSet(AuthorOrReadOnlyMixin, viewsets.ModelViewSet):  # type: ignore[misc]  # noqa: E501
+class CommentViewSet(AuthorOrReadOnlyMixin, viewsets.ModelViewSet):
     serializer_class = CommentSerializer
 
     def get_post_by_id(self):
