@@ -35,6 +35,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get_post_by_id(self):
         return get_object_or_404(Post, pk=self.kwargs.get("post_id"))
