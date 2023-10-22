@@ -1,7 +1,6 @@
 from rest_framework import filters, mixins, permissions, viewsets
 from rest_framework.pagination import LimitOffsetPagination
 
-from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 
 from posts.models import Post, Follow, Group
@@ -29,16 +28,6 @@ class PostViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-    def perform_update(self, serializer):
-        if serializer.instance.author != self.request.user:
-            raise PermissionDenied()
-        super(PostViewSet, self).perform_update(serializer)
-
-    def perform_destroy(self, instance):
-        if instance.author != self.request.user:
-            raise PermissionDenied()
-        super(PostViewSet, self).perform_destroy(instance)
-
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
@@ -60,16 +49,6 @@ class CommentViewSet(viewsets.ModelViewSet):
             author=self.request.user,
             post=CommentViewSet.get_post_by_id(self)
         )
-
-    def perform_update(self, serializer):
-        if serializer.instance.author != self.request.user:
-            raise PermissionDenied()
-        super(CommentViewSet, self).perform_update(serializer)
-
-    def perform_destroy(self, instance):
-        if instance.author != self.request.user:
-            raise PermissionDenied()
-        super(CommentViewSet, self).perform_destroy(instance)
 
 
 class FollowViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
