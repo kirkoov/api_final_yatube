@@ -9,6 +9,9 @@ class Group(models.Model):
     slug = models.SlugField(unique=True)
     description = models.TextField()
 
+    class Meta:
+        ordering = ('title',)
+
     def __str__(self):
         return self.title
 
@@ -52,6 +55,7 @@ class Follow(models.Model):
         User, on_delete=models.CASCADE, related_name='user_following_these')
 
     class Meta:
+        ordering = ('user',)
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'following'],
