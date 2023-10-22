@@ -50,9 +50,9 @@ class Comment(models.Model):
 
 class Follow(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='user_who_follows')
+        User, on_delete=models.CASCADE, related_name='follows')
     following = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='user_following_these')
+        User, on_delete=models.CASCADE, related_name='following')
 
     class Meta:
         ordering = ('user',)
