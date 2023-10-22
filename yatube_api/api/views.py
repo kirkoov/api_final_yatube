@@ -9,19 +9,17 @@ from .serializers import (
     CommentSerializer, FollowSerializer, GroupSerializer, PostSerializer)
 
 
-class AuthorOrReadOnlyMixin:
+class GroupViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
-class GroupViewSet(AuthorOrReadOnlyMixin, viewsets.ReadOnlyModelViewSet):
-    queryset = Group.objects.all()
-    serializer_class = GroupSerializer
-
-
-class PostViewSet(AuthorOrReadOnlyMixin, viewsets.ModelViewSet):
+class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     pagination_class = LimitOffsetPagination
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -37,8 +35,9 @@ class PostViewSet(AuthorOrReadOnlyMixin, viewsets.ModelViewSet):
         super(PostViewSet, self).perform_destroy(instance)
 
 
-class CommentViewSet(AuthorOrReadOnlyMixin, viewsets.ModelViewSet):
+class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get_post_by_id(self):
         return get_object_or_404(Post, pk=self.kwargs.get('post_id'))
